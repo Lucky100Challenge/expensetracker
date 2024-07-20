@@ -10,20 +10,20 @@ if 'budgets' not in st.session_state:
 
 def add_expense():
     if st.session_state.amount and st.session_state.category:
-        new_expense = {
-            'Date': st.session_state.date,
-            'Category': st.session_state.category,
-            'Amount': float(st.session_state.amount)
-        }
-        st.session_state.expenses = st.session_state.expenses.append(new_expense, ignore_index=True)
+        new_expense = pd.DataFrame({
+            'Date': [st.session_state.date],
+            'Category': [st.session_state.category],
+            'Amount': [float(st.session_state.amount)]
+        })
+        st.session_state.expenses = pd.concat([st.session_state.expenses, new_expense], ignore_index=True)
 
 def add_budget():
     if st.session_state.budget_amount and st.session_state.budget_category:
-        new_budget = {
-            'Category': st.session_state.budget_category,
-            'Budget': float(st.session_state.budget_amount)
-        }
-        st.session_state.budgets = st.session_state.budgets.append(new_budget, ignore_index=True)
+        new_budget = pd.DataFrame({
+            'Category': [st.session_state.budget_category],
+            'Budget': [float(st.session_state.budget_amount)]
+        })
+        st.session_state.budgets = pd.concat([st.session_state.budgets, new_budget], ignore_index=True)
 
 def plot_summary():
     combined = st.session_state.expenses.groupby('Category')['Amount'].sum().reset_index()
