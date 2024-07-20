@@ -66,9 +66,3 @@ st.button('Set Budget', on_click=add_budget)
 
 st.subheader('Expense and Budget Summary')
 plot_summary()
-
-st.subheader('Expenses')
-st.dataframe(st.session_state.expenses)
-
-st.subheader('Budgets')
-st.dataframe(st.session_state.budgets)
