@@ -26,11 +26,25 @@ def add_budget():
         st.session_state.budgets = pd.concat([st.session_state.budgets, new_budget], ignore_index=True)
 
 def plot_summary():
+    if st.session_state.expenses.empty or st.session_state.budgets.empty:
+        st.write("No data available for plotting.")
+        return
+
+    # Ensure numeric data
+    st.session_state.expenses['Amount'] = pd.to_numeric(st.session_state.expenses['Amount'], errors='coerce')
+    st.session_state.budgets['Budget'] = pd.to_numeric(st.session_state.budgets['Budget'], errors='coerce')
+
+    # Group expenses and merge with budgets
     combined = st.session_state.expenses.groupby('Category')['Amount'].sum().reset_index()
     budget_summary = st.session_state.budgets.merge(combined, on='Category', how='left')
     budget_summary['Amount'].fillna(0, inplace=True)
     budget_summary['Difference'] = budget_summary['Budget'] - budget_summary['Amount']
-    
+
+    # Print for debugging
+    st.write("Budget Summary Data:")
+    st.write(budget_summary)
+
+    # Plot the data
     fig, ax = plt.subplots()
     budget_summary.plot(kind='bar', x='Category', y=['Budget', 'Amount'], ax=ax)
     ax.set_ylabel('Amount')
